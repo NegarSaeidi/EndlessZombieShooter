@@ -22,6 +22,7 @@ public struct WeaponStats
     public float fireDistance;
     public bool repeating;
     public LayerMask weaponHitLayers;
+    public int totalBullets;
 }
 
 public enum weaponFiringPattern
@@ -31,7 +32,10 @@ public enum weaponFiringPattern
 public class WeaponComponent : MonoBehaviour
 {
     public Transform GripLocation;
+    public Transform FiringEffectLocation;
     protected WeaponHolder weaponholder;
+    [SerializeField]
+    protected ParticleSystem firingEffect;
     [SerializeField]
     public WeaponStats weaponStats;
     public weaponFiringPattern pattern;
@@ -42,11 +46,12 @@ public class WeaponComponent : MonoBehaviour
     public Camera mainCamera;
     void Start()
     {
+
     }
     private void Awake()
     {
             mainCamera = Camera.main;
-        
+     
     }
     // Update is called once per frame
     void Update()
@@ -69,18 +74,54 @@ public class WeaponComponent : MonoBehaviour
         else
         {
             FireWeapon();
+           
         }
     }
     public virtual void StopFiringWeapon()
     {
         isFiring = false;
         CancelInvoke(nameof(FireWeapon));
+        if (firingEffect.isPlaying)
+        {
+            firingEffect.Stop();
+        }
         print("stop firing!");
     }
     protected virtual void FireWeapon()
     {
         weaponStats.bulletsInClip--;
         print("Firing weapon..!");
+        if (firingEffect)
+        {
+            firingEffect.Play();
+        }
+    }
+    public virtual void StartReloading()
+    {
+        isReloading = true;
+        ReloeadWeapon();
+    }
+    public virtual void StopReloading()
+    {
+        isReloading = false;
+    }
+    protected virtual void ReloeadWeapon()
+    {
+        if (firingEffect.isPlaying)
+        {
+            firingEffect.Stop();
+        }
+        int bulletsToReload = weaponStats.clipSize - weaponStats.totalBullets;
+        if (bulletsToReload < 0)
+        {
+            weaponStats.bulletsInClip = weaponStats.clipSize;
+            weaponStats.totalBullets -= weaponStats.clipSize;
+        }
+        else
+        {
+            weaponStats.bulletsInClip = weaponStats.totalBullets;
+            weaponStats.totalBullets = 0;
+        }
     }
 }
 

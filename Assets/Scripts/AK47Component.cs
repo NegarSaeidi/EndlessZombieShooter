@@ -19,24 +19,30 @@ public class Weapon : WeaponComponent
     {
         Vector3 hitLocation;
         Ray screenRay = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-
-        if (Physics.Raycast(screenRay, out RaycastHit hit, weaponStats.fireDistance, weaponStats.weaponHitLayers))
+        if (weaponStats.bulletsInClip > 0 && !isReloading && !weaponholder.playerController.isRunning)
         {
-           // base.FireWeapon();
+            base.FireWeapon();
+          
+            if (Physics.Raycast(screenRay, out RaycastHit hit, weaponStats.fireDistance, weaponStats.weaponHitLayers))
+            {
+             
 
-            hitLocation = hit.point;
+                hitLocation = hit.point;
 
+               
+                Vector3 hitDirection = hit.point - mainCamera.transform.position;
 
-            Vector3 hitDirection = hit.point - mainCamera.transform.position;
+                Debug.DrawRay(mainCamera.transform.position, hitDirection.normalized * weaponStats.fireDistance, Color.red, 1);
 
-            Debug.DrawRay(mainCamera.transform.position, hitDirection.normalized * weaponStats.fireDistance, Color.red, 1);
-
+            }
+           
         }
-        
-      
-        else if(weaponStats.bulletsInClip <=0)
+
+        else if (weaponStats.bulletsInClip <= 0)
         {
+           
             weaponholder.StartReloading();
         }
+      
     }
 }
