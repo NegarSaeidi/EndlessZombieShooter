@@ -91,7 +91,7 @@ public class WeaponComponent : MonoBehaviour
     {
         weaponStats.bulletsInClip--;
         print("Firing weapon..!");
-        if (firingEffect)
+        if (!firingEffect.isPlaying)
         {
             firingEffect.Play();
         }

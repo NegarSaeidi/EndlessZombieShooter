@@ -28,6 +28,7 @@ public class MovementComponent : MonoBehaviour
     public readonly int isRunningHash = Animator.StringToHash("isRunning");
     public readonly int isFiringHash = Animator.StringToHash("isFiring");
     public readonly int isReloadingHash = Animator.StringToHash("isReloading");
+    public readonly int verticalAimHash = Animator.StringToHash("AimVertical");
 
     public GameObject followTarget;
 
@@ -36,12 +37,16 @@ public class MovementComponent : MonoBehaviour
         playerAnimator = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody>();
         playerController = GetComponent<PlayerController>();
+     
 
     }
 
     void Start()
     {
-        
+        if (!GameManager.instance.cursorActive)
+        {
+            AppEvents.InvokeMouseCursorEnable(false);
+        }
 
 
     }
@@ -93,7 +98,10 @@ public class MovementComponent : MonoBehaviour
     }
     public void OnJump(InputValue value)
     {
-       
+       if(playerController.isJumping)
+        {
+            return;
+        }
         playerController.isJumping = value.isPressed;
         rigidBody.AddForce((transform.up + moveDirection)*jumpForce, ForceMode.Impulse);
         playerAnimator.SetBool(isJumpingHash, playerController.isJumping);
@@ -102,12 +110,15 @@ public class MovementComponent : MonoBehaviour
     public void OnAim(InputValue value)
     {
         playerController.isAiming = value.isPressed;
+       
     }
     public void OnLook(InputValue value)
     {
-        lookInput= value.Get<Vector2>();
-        
 
+        lookInput= value.Get<Vector2>();
+       
+       
+      
     }
    
 
