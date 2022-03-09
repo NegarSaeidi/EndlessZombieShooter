@@ -55,11 +55,25 @@ public class MovementComponent : MonoBehaviour
     {
         //AIMING
         followTarget.transform.rotation *= Quaternion.AngleAxis(lookInput.x * aimSensitivity, Vector3.up);
+
         followTarget.transform.rotation *= Quaternion.AngleAxis(lookInput.y * aimSensitivity, Vector3.left);
 
         var angles = followTarget.transform.localEulerAngles;
         angles.z = 0;
+
         var angle = followTarget.transform.localEulerAngles.x;
+
+        float min = -60;
+        float max = 70.0f;
+        float range = max - min;
+        float offsetToZero = 0 - min;
+        float aimAngle = followTarget.transform.localEulerAngles.x;
+        aimAngle = (aimAngle > 180) ? aimAngle - 360 : aimAngle;
+        float val = (aimAngle + offsetToZero) / (range);
+        print(val);
+        playerAnimator.SetFloat(verticalAimHash, val);
+
+
         if (angle > 180 && angle < 300)
         {
             angles.x = 300;
@@ -68,10 +82,24 @@ public class MovementComponent : MonoBehaviour
         {
             angles.x = 70;
         }
+        //followTarget.transform.rotation *= Quaternion.AngleAxis(lookInput.x * aimSensitivity, Vector3.up);
+        //followTarget.transform.rotation *= Quaternion.AngleAxis(lookInput.y * aimSensitivity, Vector3.left);
 
-        followTarget.transform.localEulerAngles = angles;
-        transform.rotation = Quaternion.Euler(0, followTarget.transform.rotation.eulerAngles.y, 0);
-        followTarget.transform.localEulerAngles = new Vector3(angles.x, 0, 0);
+        //var angles = followTarget.transform.localEulerAngles;
+        //angles.z = 0;
+        //var angle = followTarget.transform.localEulerAngles.x;
+        //if (angle > 180 && angle < 300)
+        //{
+        //    angles.x = 300;
+        //}
+        //else if (angle < 180 && angle > 70)
+        //{
+        //    angles.x = 70;
+        //}
+
+        //followTarget.transform.localEulerAngles = angles;
+        //transform.rotation = Quaternion.Euler(0, followTarget.transform.rotation.eulerAngles.y, 0);
+        //followTarget.transform.localEulerAngles = new Vector3(angles.x, 0, 0);
 
 
         if (playerController.isJumping) return;
